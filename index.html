@@ -1,23 +1,28 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html>
 <head>
-    <title>CarbonManager</title>
+    <title>CarbonManager - Interactive Eco Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: Arial; max-width: 700px; margin: auto; padding: 20px; background-color: #e6f2e6; }
-        h1, h2 { text-align: center; color: #2e7d32; }
-        label { display: block; margin-top: 15px; }
+        body { font-family: Arial; max-width: 700px; margin: auto; padding: 20px; background: linear-gradient(to bottom, #e6f2e6, #ffffff); }
+        h1, h2, h3 { text-align: center; color: #2e7d32; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
         input, select { width: 100%; padding: 8px; margin-top: 5px; }
-        button { margin-top: 20px; padding: 10px 20px; background-color: #2e7d32; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #1b5e20; }
-        #result { margin-top: 20px; font-weight: bold; }
+        .feedback { margin<-top: 5px; font-weight: bold; }
+        .feedback.good { color: green; }
+        .feedback.bad { color: orange; }
+        #result { margin-top: 20px; font-weight: bold; text-align: center; }
+        button { margin-top: 20px; padding: 10px 20px; background-color: #2e7d32; color: white; border: none; cursor: pointer; display:block; margin:auto; }
+        button:hover { background-color: #1b5e20; transform: scale(1.05); transition: 0.3s; }
         nav a { margin-right: 15px; color: #2e7d32; text-decoration: none; font-weight: bold; }
-        nav a:hover { text-decoration: underline; }
-        ul { margin-top: 10px; }
+        nav a:hover { color: #145214; text-decoration: underline; }
+        #ecoPlan ul { margin-top: 10px; }
+        canvas { margin-top: 20px; }
     </style>
 </head>
 <body>
 
-<!-- NAVIGATION MENU -->
+<!-- Navigation -->
 <nav>
   <a href="index.html">Calculator</a> |
   <a href="about.html">About</a> |
@@ -27,113 +32,191 @@
 <hr>
 
 <h1>CarbonManager</h1>
-<h2>Smart Carbon Footprint Calculator</h2>
+<h2>Interactive Carbon Footprint Calculator</h2>
 
+<!-- Question Inputs -->
 <label>1. Km traveled daily by car/motorbike:</label>
-<input type="number" id="q1" value="0">
+<input type="number" id="q1" value="0" oninput="instantFeedback(1)">
+<div id="fb1" class="feedback"></div>
 
 <label>2. Km traveled daily by bus/public transport:</label>
-<input type="number" id="q2" value="0">
+<input type="number" id="q2" value="0" oninput="instantFeedback(2)">
+<div id="fb2" class="feedback"></div>
 
 <label>3. Hours of electricity used daily:</label>
-<input type="number" id="q3" value="0">
+<input type="number" id="q3" value="0" oninput="instantFeedback(3)">
+<div id="fb3" class="feedback"></div>
 
-<label>4. Hours of air conditioning/fan daily:</label>
-<input type="number" id="q4" value="0">
+<label>4. Hours of AC/fan daily:</label>
+<input type="number" id="q4" value="0" oninput="instantFeedback(4)">
+<div id="fb4" class="feedback"></div>
 
 <label>5. Plastic bottles used per week:</label>
-<input type="number" id="q5" value="0">
+<input type="number" id="q5" value="0" oninput="instantFeedback(5)">
+<div id="fb5" class="feedback"></div>
 
 <label>6. Plastic bags used per week:</label>
-<input type="number" id="q6" value="0">
+<input type="number" id="q6" value="0" oninput="instantFeedback(6)">
+<div id="fb6" class="feedback"></div>
 
 <label>7. Frequency of recycling (0-10, 0=never, 10=always):</label>
-<input type="number" id="q7" value="0" min="0" max="10">
+<input type="number" id="q7" value="0" min="0" max="10" oninput="instantFeedback(7)">
+<div id="fb7" class="feedback"></div>
 
 <label>8. Water wasted daily (liters):</label>
-<input type="number" id="q8" value="0">
+<input type="number" id="q8" value="0" oninput="instantFeedback(8)">
+<div id="fb8" class="feedback"></div>
 
 <label>9. New electronic gadgets bought per year:</label>
-<input type="number" id="q9" value="0">
+<input type="number" id="q9" value="0" oninput="instantFeedback(9)">
+<div id="fb9" class="feedback"></div>
 
 <label>10. Shower type:</label>
-<select id="q10">
+<select id="q10" onchange="instantFeedback(10)">
     <option value="short">Short shower</option>
     <option value="long">Long bath</option>
 </select>
+<div id="fb10" class="feedback"></div>
 
-<button onclick="calculate()">Calculate Carbon Footprint</button>
+<!-- Buttons -->
+<button onclick="calculate()">Calculate Final Carbon Score</button>
+<button onclick="simulateFuture()">Simulate Future Footprint</button>
+<button onclick="aiPrediction()">AI Prediction Demo</button>
 
+<!-- Results -->
 <div id="result"></div>
 
+<h3>Category Breakdown</h3>
+<canvas id="pieChart" width="400" height="400"></canvas>
+
+<h3>Daily Eco-Plan + Awareness</h3>
+<div id="ecoPlan"></div>
+
 <script>
-function calculate() {
-    var q1 = parseFloat(document.getElementById("q1").value);
-    var q2 = parseFloat(document.getElementById("q2").value);
-    var q3 = parseFloat(document.getElementById("q3").value);
-    var q4 = parseFloat(document.getElementById("q4").value);
-    var q5 = parseFloat(document.getElementById("q5").value);
-    var q6 = parseFloat(document.getElementById("q6").value);
-    var q7 = parseFloat(document.getElementById("q7").value);
-    var q8 = parseFloat(document.getElementById("q8").value);
-    var q9 = parseFloat(document.getElementById("q9").value);
-    var q10 = document.getElementById("q10").value;
+// === Step 2: Instant feedback with color coding ===
+function instantFeedback(q){
+    var value = parseFloat(document.getElementById("q"+q).value) || 0;
+    var feedback = "";
+    var el = document.getElementById("fb"+q);
+    el.classList.remove("good","bad");
+    switch(q){
+        case 1: feedback = value > 10 ? "You drive a lot. Consider bus or carpooling." : "Great! Your car travel is low."; break;
+        case 2: feedback = value < 5 ? "Try to use public transport more often." : "Good! You use public transport effectively."; break;
+        case 3: feedback = value > 5 ? "Reduce electricity usage; turn off unused devices." : "Electricity usage is low."; break;
+        case 4: feedback = value > 2 ? "Reduce AC/fan usage or use energy-efficient appliances." : "Energy consumption under control."; break;
+        case 5: feedback = value > 5 ? "Use reusable bottles instead of plastic." : "Plastic bottle usage is low."; break;
+        case 6: feedback = value > 5 ? "Reduce plastic bag use; switch to cloth bags." : "Minimal plastic bag usage."; break;
+        case 7: feedback = value < 5 ? "Recycle more items like paper, plastic, metal." : "Excellent! You recycle well."; break;
+        case 8: feedback = value > 50 ? "Reduce water wastage; use taps efficiently." : "Water usage is moderate."; break;
+        case 9: feedback = value > 2 ? "Consider using old electronics longer to limit e-waste." : "Excellent! You limit e-waste."; break;
+        case 10: feedback = value == "long" ? "Long baths consume more water; try short showers." : "Short showers save water."; break;
+    }
+    el.innerText = feedback;
+    el.classList.add(feedback.includes("Excellent") || feedback.includes("Great") || feedback.includes("Good") ? "good" : "bad");
+}
 
-    var score = 0;
-    score += q1 * 0.21;
-    score += q2 * 0.05;
-    score += q3 * 0.8;
-    score += q4 * 0.7;
-    score += q5 * 0.3;
-    score += q6 * 0.2;
-    score += (10 - q7) * 0.5;
-    score += q8 * 0.02;
-    score += q9 * 20;
-    if(q10 == "long") score += 5;
+// === Step 3: Future simulator ===
+function simulateFuture(){
+    var q = [];
+    for(var i=1;i<=10;i++) q[i] = parseFloat(document.getElementById("q"+i).value) || 0;
+    var days = parseInt(prompt("Enter number of days to simulate future carbon footprint:", "7"));
+    if(isNaN(days) || days<=0) days = 7;
+    var dailyScore = q[1]*0.21 + q[2]*0.05 + q[3]*0.8 + q[4]*0.7 + q[5]*0.3 + q[6]*0.2 + (10-q[7])*0.5 + q[8]*0.02 + q[9]*20 + (q[10]=="long"?5:0);
+    var futureScore = dailyScore * days;
+    alert("Predicted carbon footprint for "+days+" days: "+futureScore.toFixed(2)+"\nTry adjusting inputs to improve!");
+    
+    var transport = (q[1]*0.21 + q[2]*0.05) * days;
+    var electricity = (q[3]*0.8 + q[4]*0.7) * days;
+    var plastic = (q[5]*0.3 + q[6]*0.2) * days;
+    var recycling = ((10-q[7])*0.5) * days;
+    var water = (q[8]*0.02 + (q[10]=="long"?5:0)) * days;
+    var ewaste = (q[9]*20) * days;
+    if(window.pieChartInstance) window.pieChartInstance.destroy();
+    var ctx = document.getElementById('pieChart').getContext('2d');
+    window.pieChartInstance = new Chart(ctx, {
+        type:'pie',
+        data:{labels:['Transport','Electricity','Plastic','Recycling','Water','E-waste'],
+              datasets:[{data:[transport,electricity,plastic,recycling,water,ewaste],
+                         backgroundColor:['#ff6384','#36a2eb','#ffcd56','#4bc0c0','#9966ff','#ff9f40']}]},
+        options: {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context){
+                            let total = context.dataset.data.reduce((a,b)=>a+b,0);
+                            let val = context.raw;
+                            let percent = ((val/total)*100).toFixed(1);
+                            return context.label+": "+val.toFixed(2)+" ("+percent+"%)";
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
 
-    // Personalized feedback
-    var messages = [];
+// === Step 4: Calculate + Awareness Messages ===
+function calculate(){
+    var q = [];
+    for(var i=1;i<=10;i++) q[i] = parseFloat(document.getElementById("q"+i).value) || 0;
+    var transport = q[1]*0.21 + q[2]*0.05;
+    var electricity = q[3]*0.8 + q[4]*0.7;
+    var plastic = q[5]*0.3 + q[6]*0.2;
+    var recycling = (10-q[7])*0.5;
+    var water = q[8]*0.02 + (q[10]=="long"?5:0);
+    var ewaste = q[9]*20;
+    var totalScore = transport+electricity+plastic+recycling+water+ewaste;
 
-    if(q1 > 10) messages.push("Consider using bus or carpooling to reduce emissions from driving.");
-    else messages.push("Great! Your car travel is low.");
+    var finalMsg = totalScore<20 ? "Very low carbon footprint." :
+                   totalScore<50 ? "Moderate carbon footprint. Some improvements needed." :
+                   "High carbon footprint! Immediate action required.";
+    document.getElementById("result").innerHTML = "Estimated daily carbon footprint score: "+totalScore.toFixed(2)+"<br>"+finalMsg;
 
-    if(q2 < 5) messages.push("Try to use public transport more often.");
-    else messages.push("Nice! You are using public transport effectively.");
+    if(window.pieChartInstance) window.pieChartInstance.destroy();
+    var ctx = document.getElementById('pieChart').getContext('2d');
+    window.pieChartInstance = new Chart(ctx,{type:'pie',
+        data:{labels:['Transport','Electricity','Plastic','Recycling','Water','E-waste'],
+              datasets:[{data:[transport,electricity,plastic,recycling,water,ewaste],
+                         backgroundColor:['#ff6384','#36a2eb','#ffcd56','#4bc0c0','#9966ff','#ff9f40']}]},
+        options: {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context){
+                            let total = context.dataset.data.reduce((a,b)=>a+b,0);
+                            let val = context.raw;
+                            let percent = ((val/total)*100).toFixed(1);
+                            return context.label+": "+val.toFixed(2)+" ("+percent+"%)";
+                        }
+                    }
+                }
+            }
+        }
+    });
 
-    if(q3 > 5) messages.push("Try switching off unused devices and lights to save electricity.");
-    else messages.push("Good! Your electricity usage is low.");
+    var plan="<ul>";
+    if(q[1]>10) plan+="<li>Consider bus or carpooling to reduce driving emissions.</li>";
+    if(q[2]<5) plan+="<li>Use public transport more often.</li>";
+    if(q[3]>5) plan+="<li>Switch off unused lights and devices.</li>";
+    if(q[4]>2) plan+="<li>Reduce AC/fan usage or use energy-efficient appliances.</li>";
+    if(q[5]>5) plan+="<li>Use reusable bottles instead of plastic.</li>";
+    if(q[6]>5) plan+="<li>Reduce plastic bag use; switch to cloth bags.</li>";
+    if(q[7]<5) plan+="<li>Recycle more items like paper, plastic, metal.</li>";
+    if(q[8]>50) plan+="<li>Reduce water wastage; use taps efficiently.</li>";
+    if(q[9]>2) plan+="<li>Use electronic gadgets longer before buying new ones.</li>";
+    if(q[10]=="long") plan+="<li>Take shorter showers to save water.</li>";
+    plan+="</ul>";
 
-    if(q4 > 2) messages.push("Reduce AC/fan usage or use energy-efficient appliances.");
-    else messages.push("Excellent! Your energy consumption is under control.");
+    document.getElementById("ecoPlan").innerHTML = plan;
+}
 
-    if(q5 > 5) messages.push("Try using reusable bottles instead of plastic bottles.");
-    else messages.push("Great! Your plastic bottle usage is low.");
-
-    if(q6 > 5) messages.push("Reduce plastic bag use and switch to cloth bags.");
-    else messages.push("Good! Minimal plastic bag usage.");
-
-    if(q7 < 5) messages.push("Try to recycle more items like paper, plastic, and metal.");
-    else messages.push("Excellent! You are recycling well.");
-
-    if(q8 > 50) messages.push("Try reducing water wastage by using taps efficiently.");
-    else messages.push("Good! Your water usage is moderate.");
-
-    if(q9 > 2) messages.push("Consider using old electronics longer before buying new ones.");
-    else messages.push("Excellent! You limit e-waste.");
-
-    if(q10 == "long") messages.push("Long baths consume more water, try shorter showers.");
-    else messages.push("Good! Short showers save water.");
-
-    var finalMessage = "";
-    if(score < 20) finalMessage = " Wow! Your carbon footprint is very low. Keep up the good habits!";
-    else if(score < 50) finalMessage = " Your carbon footprint is moderate. Here are some tips to improve:";
-    else finalMessage = "High carbon footprint! Take action immediately. Here's what you can do:";
-
-    document.getElementById("result").innerHTML =
-        "Estimated daily carbon footprint score: " + score.toFixed(2) + "<br><br>" +
-        finalMessage + "<ul><li>" + messages.join("</li><li>") + "</li></ul>";
+// === Step 6: AI Prediction Demo ===
+function aiPrediction(){
+    var q1 = parseFloat(document.getElementById("q1").value) || 0;
+    var prediction = "Based on your car travel, if you reduce it by half, your carbon score may drop by "+(q1*0.21/2).toFixed(2)+" units.";
+    alert(prediction);
 }
 </script>
-
 </body>
 </html>
+
