@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>CarbonManager - Interactive Eco Calculator</title>
@@ -8,7 +8,7 @@
         h1, h2, h3 { text-align: center; color: #2e7d32; }
         label { display: block; margin-top: 15px; font-weight: bold; }
         input, select { width: 100%; padding: 8px; margin-top: 5px; }
-        .feedback { margin<-top: 5px; font-weight: bold; }
+        .feedback { margin-top: 5px; font-weight: bold; }
         .feedback.good { color: green; }
         .feedback.bad { color: orange; }
         #result { margin-top: 20px; font-weight: bold; text-align: center; }
@@ -93,7 +93,7 @@
 <div id="ecoPlan"></div>
 
 <script>
-// === Step 2: Instant feedback with color coding ===
+// Instant feedback
 function instantFeedback(q){
     var value = parseFloat(document.getElementById("q"+q).value) || 0;
     var feedback = "";
@@ -115,7 +115,7 @@ function instantFeedback(q){
     el.classList.add(feedback.includes("Excellent") || feedback.includes("Great") || feedback.includes("Good") ? "good" : "bad");
 }
 
-// === Step 3: Future simulator ===
+// Future simulator
 function simulateFuture(){
     var q = [];
     for(var i=1;i<=10;i++) q[i] = parseFloat(document.getElementById("q"+i).value) || 0;
@@ -139,23 +139,12 @@ function simulateFuture(){
               datasets:[{data:[transport,electricity,plastic,recycling,water,ewaste],
                          backgroundColor:['#ff6384','#36a2eb','#ffcd56','#4bc0c0','#9966ff','#ff9f40']}]},
         options: {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context){
-                            let total = context.dataset.data.reduce((a,b)=>a+b,0);
-                            let val = context.raw;
-                            let percent = ((val/total)*100).toFixed(1);
-                            return context.label+": "+val.toFixed(2)+" ("+percent+"%)";
-                        }
-                    }
-                }
-            }
+            plugins: { tooltip: { callbacks: { label: function(context){ let total = context.dataset.data.reduce((a,b)=>a+b,0); let val = context.raw; let percent = ((val/total)*100).toFixed(1); return context.label+": "+val.toFixed(2)+" ("+percent+"%)"; }}}}
         }
     });
 }
 
-// === Step 4: Calculate + Awareness Messages ===
+// Calculate + Eco Plan
 function calculate(){
     var q = [];
     for(var i=1;i<=10;i++) q[i] = parseFloat(document.getElementById("q"+i).value) || 0;
@@ -177,22 +166,7 @@ function calculate(){
     window.pieChartInstance = new Chart(ctx,{type:'pie',
         data:{labels:['Transport','Electricity','Plastic','Recycling','Water','E-waste'],
               datasets:[{data:[transport,electricity,plastic,recycling,water,ewaste],
-                         backgroundColor:['#ff6384','#36a2eb','#ffcd56','#4bc0c0','#9966ff','#ff9f40']}]},
-        options: {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context){
-                            let total = context.dataset.data.reduce((a,b)=>a+b,0);
-                            let val = context.raw;
-                            let percent = ((val/total)*100).toFixed(1);
-                            return context.label+": "+val.toFixed(2)+" ("+percent+"%)";
-                        }
-                    }
-                }
-            }
-        }
-    });
+                         backgroundColor:['#ff6384','#36a2eb','#ffcd56','#4bc0c0','#9966ff','#ff9f40']}]}});
 
     var plan="<ul>";
     if(q[1]>10) plan+="<li>Consider bus or carpooling to reduce driving emissions.</li>";
@@ -206,17 +180,15 @@ function calculate(){
     if(q[9]>2) plan+="<li>Use electronic gadgets longer before buying new ones.</li>";
     if(q[10]=="long") plan+="<li>Take shorter showers to save water.</li>";
     plan+="</ul>";
-
     document.getElementById("ecoPlan").innerHTML = plan;
 }
 
-// === Step 6: AI Prediction Demo ===
+// AI Prediction Demo
 function aiPrediction(){
     var q1 = parseFloat(document.getElementById("q1").value) || 0;
-    var prediction = "Based on your car travel, if you reduce it by half, your carbon score may drop by "+(q1*0.21/2).toFixed(2)+" units.";
+    var prediction = "If you reduce car travel by half, your carbon score may drop by "+(q1*0.21/2).toFixed(2)+" units.";
     alert(prediction);
 }
 </script>
 </body>
 </html>
-
