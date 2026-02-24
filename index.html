@@ -10,85 +10,96 @@
         button { margin-top: 20px; padding: 10px 20px; background-color: #2e7d32; color: white; border: none; cursor: pointer; }
         button:hover { background-color: #1b5e20; }
         #result { margin-top: 20px; font-weight: bold; }
+        nav a { margin-right: 15px; color: #2e7d32; text-decoration: none; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <h1>CarbonManager</h1>
-    <h2>Smart Carbon Footprint Calculator</h2>
 
-    <label>1. Km traveled daily by car/motorbike:</label>
-    <input type="number" id="q1" value="0">
+<!-- NAVIGATION MENU -->
+<nav>
+  <a href="index.html">Calculator</a> |
+  <a href="about.html">About</a> |
+  <a href="future.html">Future Scope</a> |
+  <a href="contact.html">Contact</a>
+</nav>
+<hr>
 
-    <label>2. Km traveled daily by bus/public transport:</label>
-    <input type="number" id="q2" value="0">
+<!-- CALCULATOR STARTS HERE -->
+<h1>CarbonManager</h1>
+<h2>Smart Carbon Footprint Calculator</h2>
 
-    <label>3. Hours of electricity used daily:</label>
-    <input type="number" id="q3" value="0">
+<label>1. Km traveled daily by car/motorbike:</label>
+<input type="number" id="q1" value="0">
 
-    <label>4. Hours of air conditioning/fan daily:</label>
-    <input type="number" id="q4" value="0">
+<label>2. Km traveled daily by bus/public transport:</label>
+<input type="number" id="q2" value="0">
 
-    <label>5. Plastic bottles used per week:</label>
-    <input type="number" id="q5" value="0">
+<label>3. Hours of electricity used daily:</label>
+<input type="number" id="q3" value="0">
 
-    <label>6. Plastic bags used per week:</label>
-    <input type="number" id="q6" value="0">
+<label>4. Hours of air conditioning/fan daily:</label>
+<input type="number" id="q4" value="0">
 
-    <label>7. Frequency of recycling (0-10, 0=never, 10=always):</label>
-    <input type="number" id="q7" value="0" min="0" max="10">
+<label>5. Plastic bottles used per week:</label>
+<input type="number" id="q5" value="0">
 
-    <label>8. Water wasted daily (liters):</label>
-    <input type="number" id="q8" value="0">
+<label>6. Plastic bags used per week:</label>
+<input type="number" id="q6" value="0">
 
-    <label>9. New electronic gadgets bought per year:</label>
-    <input type="number" id="q9" value="0">
+<label>7. Frequency of recycling (0-10, 0=never, 10=always):</label>
+<input type="number" id="q7" value="0" min="0" max="10">
 
-    <label>10. Shower type:</label>
-    <select id="q10">
-        <option value="short">Short shower</option>
-        <option value="long">Long bath</option>
-    </select>
+<label>8. Water wasted daily (liters):</label>
+<input type="number" id="q8" value="0">
 
-    <button onclick="calculate()">Calculate Carbon Footprint</button>
+<label>9. New electronic gadgets bought per year:</label>
+<input type="number" id="q9" value="0">
 
-    <div id="result"></div>
+<label>10. Shower type:</label>
+<select id="q10">
+    <option value="short">Short shower</option>
+    <option value="long">Long bath</option>
+</select>
 
-    <script>
-        function calculate() {
-            var q1 = parseFloat(document.getElementById("q1").value);
-            var q2 = parseFloat(document.getElementById("q2").value);
-            var q3 = parseFloat(document.getElementById("q3").value);
-            var q4 = parseFloat(document.getElementById("q4").value);
-            var q5 = parseFloat(document.getElementById("q5").value);
-            var q6 = parseFloat(document.getElementById("q6").value);
-            var q7 = parseFloat(document.getElementById("q7").value);
-            var q8 = parseFloat(document.getElementById("q8").value);
-            var q9 = parseFloat(document.getElementById("q9").value);
-            var q10 = document.getElementById("q10").value;
+<button onclick="calculate()">Calculate Carbon Footprint</button>
 
-            // Simple weight-based scoring
-            var score = 0;
-            score += q1 * 0.21; // car
-            score += q2 * 0.05; // bus
-            score += q3 * 0.8;  // electricity
-            score += q4 * 0.7;  // AC/fan
-            score += q5 * 0.3;  // bottles
-            score += q6 * 0.2;  // bags
-            score += (10 - q7) * 0.5; // recycling
-            score += q8 * 0.02; // water
-            score += q9 * 20;   // electronics
-            if(q10 == "long") score += 5;
+<div id="result"></div>
 
-            // Personalized suggestion
-            var suggestion = "";
-            if(score < 20) suggestion = "Excellent! You have a low carbon footprint. Keep it up!";
-            else if(score < 50) suggestion = "Moderate footprint. Reduce some plastic use and electricity consumption.";
-            else suggestion = "High footprint! Try using public transport, reduce electricity & water usage, and recycle more.";
+<script>
+    function calculate() {
+        var q1 = parseFloat(document.getElementById("q1").value);
+        var q2 = parseFloat(document.getElementById("q2").value);
+        var q3 = parseFloat(document.getElementById("q3").value);
+        var q4 = parseFloat(document.getElementById("q4").value);
+        var q5 = parseFloat(document.getElementById("q5").value);
+        var q6 = parseFloat(document.getElementById("q6").value);
+        var q7 = parseFloat(document.getElementById("q7").value);
+        var q8 = parseFloat(document.getElementById("q8").value);
+        var q9 = parseFloat(document.getElementById("q9").value);
+        var q10 = document.getElementById("q10").value;
 
-            document.getElementById("result").innerHTML =
-                "Estimated daily carbon footprint score: " + score.toFixed(2) + "<br>" + suggestion;
-        }
-    </script>
+        var score = 0;
+        score += q1 * 0.21;
+        score += q2 * 0.05;
+        score += q3 * 0.8;
+        score += q4 * 0.7;
+        score += q5 * 0.3;
+        score += q6 * 0.2;
+        score += (10 - q7) * 0.5;
+        score += q8 * 0.02;
+        score += q9 * 20;
+        if(q10 == "long") score += 5;
+
+        var suggestion = "";
+        if(score < 20) suggestion = "Excellent! You have a low carbon footprint. Keep it up!";
+        else if(score < 50) suggestion = "Moderate footprint. Reduce some plastic use and electricity consumption.";
+        else suggestion = "High footprint! Try using public transport, reduce electricity & water usage, and recycle more.";
+
+        document.getElementById("result").innerHTML =
+            "Estimated daily carbon footprint score: " + score.toFixed(2) + "<br>" + suggestion;
+    }
+</script>
+
 </body>
 </html>
-
