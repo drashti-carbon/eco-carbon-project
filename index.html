@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CarbonManager</title>
+</head>
+<body>
+    <h1>CarbonManager</h1>
+    <h2>Smart Carbon Footprint Calculator</h2>
+
+    <p>Enter electricity hours used per day:</p>
+    <input type="number" id="electricity">
+    
+    <button onclick="calculate()">Calculate</button>
+
+    <h3 id="result"></h3>
+
+    <script>
+        function calculate() {
+            var electricity = document.getElementById("electricity").value;
+            var carbon = electricity * 0.8;
+            document.getElementById("result").innerHTML =
+            "Your estimated carbon emission is " + carbon + " kg CO₂ per day.";
+        }
+    </script>
+</body>
+</html>
