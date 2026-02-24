@@ -12,6 +12,7 @@
         #result { margin-top: 20px; font-weight: bold; }
         nav a { margin-right: 15px; color: #2e7d32; text-decoration: none; font-weight: bold; }
         nav a:hover { text-decoration: underline; }
+        ul { margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -25,7 +26,6 @@
 </nav>
 <hr>
 
-<!-- CALCULATOR STARTS HERE -->
 <h1>CarbonManager</h1>
 <h2>Smart Carbon Footprint Calculator</h2>
 
@@ -67,38 +67,72 @@
 <div id="result"></div>
 
 <script>
-    function calculate() {
-        var q1 = parseFloat(document.getElementById("q1").value);
-        var q2 = parseFloat(document.getElementById("q2").value);
-        var q3 = parseFloat(document.getElementById("q3").value);
-        var q4 = parseFloat(document.getElementById("q4").value);
-        var q5 = parseFloat(document.getElementById("q5").value);
-        var q6 = parseFloat(document.getElementById("q6").value);
-        var q7 = parseFloat(document.getElementById("q7").value);
-        var q8 = parseFloat(document.getElementById("q8").value);
-        var q9 = parseFloat(document.getElementById("q9").value);
-        var q10 = document.getElementById("q10").value;
+function calculate() {
+    var q1 = parseFloat(document.getElementById("q1").value);
+    var q2 = parseFloat(document.getElementById("q2").value);
+    var q3 = parseFloat(document.getElementById("q3").value);
+    var q4 = parseFloat(document.getElementById("q4").value);
+    var q5 = parseFloat(document.getElementById("q5").value);
+    var q6 = parseFloat(document.getElementById("q6").value);
+    var q7 = parseFloat(document.getElementById("q7").value);
+    var q8 = parseFloat(document.getElementById("q8").value);
+    var q9 = parseFloat(document.getElementById("q9").value);
+    var q10 = document.getElementById("q10").value;
 
-        var score = 0;
-        score += q1 * 0.21;
-        score += q2 * 0.05;
-        score += q3 * 0.8;
-        score += q4 * 0.7;
-        score += q5 * 0.3;
-        score += q6 * 0.2;
-        score += (10 - q7) * 0.5;
-        score += q8 * 0.02;
-        score += q9 * 20;
-        if(q10 == "long") score += 5;
+    var score = 0;
+    score += q1 * 0.21;
+    score += q2 * 0.05;
+    score += q3 * 0.8;
+    score += q4 * 0.7;
+    score += q5 * 0.3;
+    score += q6 * 0.2;
+    score += (10 - q7) * 0.5;
+    score += q8 * 0.02;
+    score += q9 * 20;
+    if(q10 == "long") score += 5;
 
-        var suggestion = "";
-        if(score < 20) suggestion = "Excellent! You have a low carbon footprint. Keep it up!";
-        else if(score < 50) suggestion = "Moderate footprint. Reduce some plastic use and electricity consumption.";
-        else suggestion = "High footprint! Try using public transport, reduce electricity & water usage, and recycle more.";
+    // Personalized feedback
+    var messages = [];
 
-        document.getElementById("result").innerHTML =
-            "Estimated daily carbon footprint score: " + score.toFixed(2) + "<br>" + suggestion;
-    }
+    if(q1 > 10) messages.push("Consider using bus or carpooling to reduce emissions from driving.");
+    else messages.push("Great! Your car travel is low.");
+
+    if(q2 < 5) messages.push("Try to use public transport more often.");
+    else messages.push("Nice! You are using public transport effectively.");
+
+    if(q3 > 5) messages.push("Try switching off unused devices and lights to save electricity.");
+    else messages.push("Good! Your electricity usage is low.");
+
+    if(q4 > 2) messages.push("Reduce AC/fan usage or use energy-efficient appliances.");
+    else messages.push("Excellent! Your energy consumption is under control.");
+
+    if(q5 > 5) messages.push("Try using reusable bottles instead of plastic bottles.");
+    else messages.push("Great! Your plastic bottle usage is low.");
+
+    if(q6 > 5) messages.push("Reduce plastic bag use and switch to cloth bags.");
+    else messages.push("Good! Minimal plastic bag usage.");
+
+    if(q7 < 5) messages.push("Try to recycle more items like paper, plastic, and metal.");
+    else messages.push("Excellent! You are recycling well.");
+
+    if(q8 > 50) messages.push("Try reducing water wastage by using taps efficiently.");
+    else messages.push("Good! Your water usage is moderate.");
+
+    if(q9 > 2) messages.push("Consider using old electronics longer before buying new ones.");
+    else messages.push("Excellent! You limit e-waste.");
+
+    if(q10 == "long") messages.push("Long baths consume more water, try shorter showers.");
+    else messages.push("Good! Short showers save water.");
+
+    var finalMessage = "";
+    if(score < 20) finalMessage = " Wow! Your carbon footprint is very low. Keep up the good habits!";
+    else if(score < 50) finalMessage = " Your carbon footprint is moderate. Here are some tips to improve:";
+    else finalMessage = "High carbon footprint! Take action immediately. Here's what you can do:";
+
+    document.getElementById("result").innerHTML =
+        "Estimated daily carbon footprint score: " + score.toFixed(2) + "<br><br>" +
+        finalMessage + "<ul><li>" + messages.join("</li><li>") + "</li></ul>";
+}
 </script>
 
 </body>
