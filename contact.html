@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Contact - CarbonManager</title>
+    <title>CarbonManager - Contact</title>
     <style>
-        body { font-family: Arial; max-width: 700px; margin: auto; padding: 20px; background-color: #e6f2e6; }
+        body { font-family: Arial; max-width: 700px; margin: auto; padding: 20px; background-color: #f0fff0; }
         h1, h2 { text-align: center; color: #2e7d32; }
-        label { display: block; margin-top: 15px; }
+        p { margin-top: 15px; line-height: 1.6; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
         input, textarea { width: 100%; padding: 8px; margin-top: 5px; }
-        button { margin-top: 20px; padding: 10px 20px; background-color: #2e7d32; color: white; border: none; cursor: pointer; }
+        button { margin-top: 15px; padding: 10px 20px; background-color: #2e7d32; color: white; border: none; cursor: pointer; }
         button:hover { background-color: #1b5e20; }
         nav a { margin-right: 15px; color: #2e7d32; text-decoration: none; font-weight: bold; }
         nav a:hover { text-decoration: underline; }
@@ -15,7 +16,7 @@
 </head>
 <body>
 
-<!-- NAVIGATION MENU -->
+<!-- Navigation -->
 <nav>
   <a href="index.html">Calculator</a> |
   <a href="about.html">About</a> |
@@ -24,19 +25,24 @@
 </nav>
 <hr>
 
-<h1>Contact Us</h1>
-<h2>We Value Your Feedback</h2>
+<h1>Contact CarbonManager</h1>
+<p>If you have any questions, suggestions, or feedback, feel free to reach out. Your input helps us improve and make the world greener!</p>
 
-<label>Name:</label>
-<input type="text" placeholder="Your name">
+<!-- Optional Contact Form -->
+<label>Your Name:</label>
+<input type="text" placeholder="Enter your name">
 
 <label>Email:</label>
-<input type="email" placeholder="Your email">
+<input type="email" placeholder="Enter your email">
 
-<label>Message / Suggestions:</label>
+<label>Message:</label>
 <textarea rows="5" placeholder="Write your message here"></textarea>
 
-<button onclick="alert('Thank you for your feedback!')">Submit</button>
+<button>Submit</button>
+
+<p style="margin-top: 20px;"><strong>Email:</strong> support@carbonmanager.com</p>
+<p><strong>Phone:</strong> +91 98765 43210</p>
 
 </body>
-</html> 
+</html>
+
