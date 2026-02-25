@@ -93,29 +93,70 @@
 <div id="ecoPlan"></div>
 
 <script>
-// Instant feedback
+// === Instant Feedback with detailed messages ===
 function instantFeedback(q){
     var value = parseFloat(document.getElementById("q"+q).value) || 0;
     var feedback = "";
     var el = document.getElementById("fb"+q);
     el.classList.remove("good","bad");
+
     switch(q){
-        case 1: feedback = value > 10 ? "You drive a lot. Consider bus or carpooling." : "Great! Your car travel is low."; break;
-        case 2: feedback = value < 5 ? "Try to use public transport more often." : "Good! You use public transport effectively."; break;
-        case 3: feedback = value > 5 ? "Reduce electricity usage; turn off unused devices." : "Electricity usage is low."; break;
-        case 4: feedback = value > 2 ? "Reduce AC/fan usage or use energy-efficient appliances." : "Energy consumption under control."; break;
-        case 5: feedback = value > 5 ? "Use reusable bottles instead of plastic." : "Plastic bottle usage is low."; break;
-        case 6: feedback = value > 5 ? "Reduce plastic bag use; switch to cloth bags." : "Minimal plastic bag usage."; break;
-        case 7: feedback = value < 5 ? "Recycle more items like paper, plastic, metal." : "Excellent! You recycle well."; break;
-        case 8: feedback = value > 50 ? "Reduce water wastage; use taps efficiently." : "Water usage is moderate."; break;
-        case 9: feedback = value > 2 ? "Consider using old electronics longer to limit e-waste." : "Excellent! You limit e-waste."; break;
-        case 10: feedback = value == "long" ? "Long baths consume more water; try short showers." : "Short showers save water."; break;
+        case 1:
+            if(value <= 5) feedback = "Excellent! Minimal car travel, low emissions.";
+            else if(value <= 15) feedback = "Moderate car use; consider carpooling or public transport occasionally.";
+            else feedback = " High car travel! Consider carpooling, cycling, walking, or public transport to cut emissions drastically.";
+            break;
+        case 2:
+            if(value >= 10) feedback = "Great! You rely on public transport, reducing carbon footprint.";
+            else if(value >= 5) feedback = "Good! Some use of public transport, but try to increase frequency.";
+            else feedback = "Low public transport use! Use buses, trains, or shared rides more to reduce emissions.";
+            break;
+        case 3:
+            if(value <= 2) feedback = "Excellent! Electricity usage is minimal.";
+            else if(value <= 5) feedback = "Moderate usage; turn off unused lights and devices.";
+            else feedback = " High electricity use! Switch off devices when not in use, use LED bulbs, and energy-efficient appliances.";
+            break;
+        case 4:
+            if(value <= 1) feedback = "Great! Very efficient cooling habits.";
+            else if(value <= 3) feedback = "Moderate; consider energy-saving AC/fans or shorter usage.";
+            else feedback = " Excessive cooling usage! Set fan/AC on optimal temperature, use timers, and ventilate naturally.";
+            break;
+        case 5:
+            if(value <= 2) feedback = "Excellent! Very low plastic bottle usage.";
+            else if(value <= 5) feedback = "Moderate; try reusable bottles.";
+            else feedback = "High plastic bottle use! Switch to refillable bottles and avoid single-use plastics.";
+            break;
+        case 6:
+            if(value <= 2) feedback = "Good! Minimal plastic bag usage.";
+            else if(value <= 5) feedback = "Moderate; carry reusable cloth bags whenever possible.";
+            else feedback = " High plastic bag usage! Stop single-use bags, reuse bags, or switch to eco-friendly alternatives.";
+            break;
+        case 7:
+            if(value >= 8) feedback = "Excellent! You recycle effectively.";
+            else if(value >= 5) feedback = "Good! Some recycling, but aim for higher frequency.";
+            else feedback = "Low recycling habit! Separate waste, recycle paper, plastic, metal, and encourage family to recycle.";
+            break;
+        case 8:
+            if(value <= 20) feedback = "Great! Water usage is minimal.";
+            else if(value <= 50) feedback = "Moderate water usage; close taps when not in use.";
+            else feedback = " Excessive water wastage! Take shorter showers, fix leaks, and reuse water wherever possible.";
+            break;
+        case 9:
+            if(value == 0) feedback = "Excellent! You limit e-waste by not buying new electronics.";
+            else if(value <= 2) feedback = "Moderate; consider using old devices longer.";
+            else feedback = " High e-waste generation! Reuse old gadgets, donate, repair instead of buying new.";
+            break;
+        case 10:
+            if(value == "short") feedback = "Great! Short showers save water.";
+            else feedback = " Long baths consume lots of water and energy! Opt for short showers to save resources.";
+            break;
     }
+
     el.innerText = feedback;
     el.classList.add(feedback.includes("Excellent") || feedback.includes("Great") || feedback.includes("Good") ? "good" : "bad");
 }
 
-// Future simulator
+// === Future simulator ===
 function simulateFuture(){
     var q = [];
     for(var i=1;i<=10;i++) q[i] = parseFloat(document.getElementById("q"+i).value) || 0;
@@ -131,6 +172,7 @@ function simulateFuture(){
     var recycling = ((10-q[7])*0.5) * days;
     var water = (q[8]*0.02 + (q[10]=="long"?5:0)) * days;
     var ewaste = (q[9]*20) * days;
+
     if(window.pieChartInstance) window.pieChartInstance.destroy();
     var ctx = document.getElementById('pieChart').getContext('2d');
     window.pieChartInstance = new Chart(ctx, {
@@ -138,13 +180,11 @@ function simulateFuture(){
         data:{labels:['Transport','Electricity','Plastic','Recycling','Water','E-waste'],
               datasets:[{data:[transport,electricity,plastic,recycling,water,ewaste],
                          backgroundColor:['#ff6384','#36a2eb','#ffcd56','#4bc0c0','#9966ff','#ff9f40']}]},
-        options: {
-            plugins: { tooltip: { callbacks: { label: function(context){ let total = context.dataset.data.reduce((a,b)=>a+b,0); let val = context.raw; let percent = ((val/total)*100).toFixed(1); return context.label+": "+val.toFixed(2)+" ("+percent+"%)"; }}}}
-        }
+        options: { plugins: { tooltip: { callbacks: { label: function(context){ let total = context.dataset.data.reduce((a,b)=>a+b,0); let val = context.raw; let percent = ((val/total)*100).toFixed(1); return context.label+": "+val.toFixed(2)+" ("+percent+"%)"; }}}}}
     });
 }
 
-// Calculate + Eco Plan
+// === Calculate & Eco-Plan ===
 function calculate(){
     var q = [];
     for(var i=1;i<=10;i++) q[i] = parseFloat(document.getElementById("q"+i).value) || 0;
@@ -166,29 +206,34 @@ function calculate(){
     window.pieChartInstance = new Chart(ctx,{type:'pie',
         data:{labels:['Transport','Electricity','Plastic','Recycling','Water','E-waste'],
               datasets:[{data:[transport,electricity,plastic,recycling,water,ewaste],
-                         backgroundColor:['#ff6384','#36a2eb','#ffcd56','#4bc0c0','#9966ff','#ff9f40']}]}});
+                         backgroundColor:['#ff6384','#36a2eb','#ffcd56','#4bc0c0','#9966ff','#ff9f40']}]},
+        options: { plugins: { tooltip: { callbacks: { label: function(context){ let total = context.dataset.data.reduce((a,b)=>a+b,0); let val = context.raw; let percent = ((val/total)*100).toFixed(1); return context.label+": "+val.toFixed(2)+" ("+percent+"%)"; }}}}}
+    });
 
+    // Daily Eco-Plan
     var plan="<ul>";
-    if(q[1]>10) plan+="<li>Consider bus or carpooling to reduce driving emissions.</li>";
-    if(q[2]<5) plan+="<li>Use public transport more often.</li>";
-    if(q[3]>5) plan+="<li>Switch off unused lights and devices.</li>";
+    if(q[1]>10) plan+="<li>Consider bus, carpooling, cycling, or walking to reduce driving emissions.</li>";
+    if(q[2]<5) plan+="<li>Use public transport more often to cut emissions.</li>";
+    if(q[3]>5) plan+="<li>Switch off unused lights and devices, use energy-efficient bulbs/appliances.</li>";
     if(q[4]>2) plan+="<li>Reduce AC/fan usage or use energy-efficient appliances.</li>";
-    if(q[5]>5) plan+="<li>Use reusable bottles instead of plastic.</li>";
-    if(q[6]>5) plan+="<li>Reduce plastic bag use; switch to cloth bags.</li>";
-    if(q[7]<5) plan+="<li>Recycle more items like paper, plastic, metal.</li>";
-    if(q[8]>50) plan+="<li>Reduce water wastage; use taps efficiently.</li>";
-    if(q[9]>2) plan+="<li>Use electronic gadgets longer before buying new ones.</li>";
-    if(q[10]=="long") plan+="<li>Take shorter showers to save water.</li>";
+    if(q[5]>5) plan+="<li>Use reusable bottles instead of plastic bottles.</li>";
+    if(q[6]>5) plan+="<li>Reduce plastic bag use; carry cloth or eco-friendly bags.</li>";
+    if(q[7]<5) plan+="<li>Recycle more items like paper, plastic, and metal.</li>";
+    if(q[8]>50) plan+="<li>Take shorter showers, fix leaks, and reuse water wherever possible.</li>";
+    if(q[9]>2) plan+="<li>Reuse electronics, repair or donate old devices before buying new ones.</li>";
+    if(q[10]=="long") plan+="<li>Take shorter showers to save water and energy.</li>";
     plan+="</ul>";
+
     document.getElementById("ecoPlan").innerHTML = plan;
 }
 
-// AI Prediction Demo
+// === AI Prediction Demo ===
 function aiPrediction(){
     var q1 = parseFloat(document.getElementById("q1").value) || 0;
-    var prediction = "If you reduce car travel by half, your carbon score may drop by "+(q1*0.21/2).toFixed(2)+" units.";
+    var prediction = "If you reduce your car travel by half, your carbon score may drop by "+(q1*0.21/2).toFixed(2)+" units.";
     alert(prediction);
 }
 </script>
 </body>
 </html>
+
